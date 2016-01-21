@@ -443,7 +443,12 @@
 		 * Should the node should be toggled if the text is double clicked . Defaults to `true`
 		 * @name $.jstree.defaults.core.dblclick_toggle
 		 */
-		dblclick_toggle : true
+		dblclick_toggle : true,
+		/**
+		 * Close other nodes on node opening. Defaults to `false`
+		 * @name $.jstree.defaults.core.close_other_on_expand
+		 */
+		 close_other_on_expand : false
 	};
 	$.jstree.core.prototype = {
 		/**
@@ -836,6 +841,14 @@
 					}, this))
 				.on('mouseleave.jstree', '.jstree-anchor', $.proxy(function (e) {
 						this.dehover_node(e.currentTarget);
+				}, this))
+				.on('open_node.jstree', $.proxy(function (e, data) {
+						if (this.settings.expand_other_on_close ){
+							var obj = data.instance.get_node(data.node, true);
+							if(obj) {
+								obj.siblings('.jstree-open').each(function () { data.instance.close_node(this, 0); }); 
+							}						
+						}
 					}, this));
 		},
 		/**
